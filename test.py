@@ -13,17 +13,17 @@ if not os.path.isdir(args.dst):
 
 x = []
 y = []
-img = src
-cv2.imwrite(os.path.join(args.dst, '00.png'), img)
-for i in range(50):
+for i in range(10):
     sigma = pow(2, i/2)
-    x.append(i + 1)
-    filter_size = 5
-    img = cv2.GaussianBlur(img, (filter_size, filter_size), pow(2, 1/2))
+    x.append(sigma)
+    filter_size = int(3 * sigma)
+    filter_size += filter_size % 2 - 1
+    img = cv2.GaussianBlur(src, (filter_size, filter_size), sigma)
     acu = cal_acutance(img)
     print(acu)
+    cv2.putText(img, str(acu), (10, 40), 2, 1.2, 255)
     name = '%02d.png' % (i + 1)
-    cv2.imwrite(os.path.join(args.dst, name), cv2.putText(img.copy(), str(acu), (10, 40), 2, 1.2, 255))
+    cv2.imwrite(os.path.join(args.dst, name), img)
     y.append(acu)
 
 fig = plt.plot(x, y)
